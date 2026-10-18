@@ -55,7 +55,7 @@ jobs:
       - name: Restore history
         run: python scripts/restore_state.py
       - name: Unit tests
-        run: pytest -q --ignore=tests/test_outputs_placeholder.py
+        run: mkdir -p runs && pytest -q --junitxml=runs/unit-tests.xml
       - name: Mock end-to-end gate
         run: |
           python -m research.pipeline --provider mock --date 2026-10-16
@@ -98,3 +98,28 @@ jobs:
       - name: Notify success
         if: success()
         run: python -m research.notify 'completed — see Actions artifacts'
+
+  live-acceptance:
+    if: github.event_name == 'push'
+    needs: analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+      POLYGON_RPM: ${{ vars.POLYGON_RPM || '5' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.lock
+      - run: pip install --no-deps -e .
+      - name: Live API acceptance after mock success
+        run: python scripts/api_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-api-acceptance-${{ github.run_id }}
+          path: runs/api-smoke/
+          retention-days: 90

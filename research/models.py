@@ -1,7 +1,7 @@
 from typing import Literal
 from pydantic import BaseModel, Field, ConfigDict
 class Security(BaseModel):
-    symbol: str
+    symbol: str = Field(pattern=r"^[A-Z0-9][A-Z0-9.\-]{0,15}$")
     name: str
     sector: str = "未分类"
     themes: list[str] = []
@@ -10,7 +10,7 @@ class Security(BaseModel):
     exchange: str = "XNYS"
 class Report(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
-    symbol: str
+    symbol: str = Field(pattern=r"^[A-Z0-9][A-Z0-9.\-]{0,15}$")
     name: str
     sector: str
     themes: list[str]

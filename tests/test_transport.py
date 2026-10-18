@@ -40,3 +40,9 @@ def test_response_cannot_cache_credential(tmp_path):
     client.session.get=lambda *a,**kw: response(200,{'secret':'credential-placeholder'})
     with pytest.raises(RuntimeError): client.get('https://api.polygon.io/test')
     assert not list(tmp_path.iterdir())
+
+def test_symbols_cannot_escape_output_directory():
+    from pydantic import ValidationError
+    from research.models import Security
+    with pytest.raises(ValidationError): Security(symbol='../escape',name='invalid')
+    assert Security(symbol='BRK.B',name='Berkshire').symbol=='BRK.B'

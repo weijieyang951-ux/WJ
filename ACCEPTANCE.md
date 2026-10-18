@@ -3,7 +3,7 @@
 仓库：https://github.com/weijieyang951-ux/WJ （public）。开始时本地 work 分支无提交；远程无已有分支；仓库源码可写。
 
 ## 已通过
-- Python 3.12.14，14 个 pytest 用例通过。
+- Python 3.12.14，15 个 pytest 用例通过。
 - 2026-10-16 mock：360 合格候选中去重 Top300，300 份各自 JSON/CSV/HTML。
 - 25 张英文 PNG 均为 1080×1920，英文文字、边界、成员、ZIP 验证通过；黑金海报目视检查通过。
 - 三套程序渲染模板，结构化报告保留中文。
@@ -26,3 +26,5 @@
 - 可选 Secret：TELEGRAM_BOT_TOKEN、TELEGRAM_CHAT_ID。
 - Variable：POLYGON_RPM，按套餐配置；默认 5 RPM 仅适合保守探测，不适合全市场时限。
 - 禁止把密钥写进代码、参数 URL、日志、缓存或提交。
+
+部署提交 7c8fac7 已非强制推送到 main；首个云端运行： https://github.com/weijieyang951-ux/WJ/actions/runs/39116819147 。追加 push 后的 live-acceptance 作业在 mock 成功后执行真实 API 冒烟测试并独立上传报告。
