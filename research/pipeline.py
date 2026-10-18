@@ -51,7 +51,7 @@ def run(provider,day,out,state,settings):
         if i==23: members=sorted([r for r in reports if r.change_pct<0],key=lambda r:r.change_pct)
         if i==24: members=sorted(reports,key=lambda r:r.relative_volume,reverse=True)
         if i==25: members=sorted(reports,key=lambda r:r.score,reverse=True)
-        members=members[:15]; filename=f'{i:02d}.png'; manifests[filename]=[r.symbol for r in members]
+        members=members[:7 if i==3 else 15]; filename=f'{i:02d}.png'; manifests[filename]=[r.symbol for r in members]
         layouts[filename]=poster(out/'posters'/filename,f'{i:02d} '+settings['poster_titles'][i-1],members,day,next_day,provider.simulated,settings['template'])
     save(out/'poster-members.json',manifests); save(out/'layout.json',layouts)
     if len(list((out/'posters').glob('*.png')))!=25 or len(reports)!=300 or len({r.symbol for r in reports})!=300: raise ValueError('invalid output counts')

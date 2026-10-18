@@ -52,6 +52,16 @@ black_gold 黑金、navy 深蓝、ivory 象牙三套程序模板，1080×1920 PN
 
 海报已经改成英文，25 个英文标题在 `config/settings.json` 的 poster_titles 配置。结构化研究报告仍为中文。默认字体使用 DejaVu Sans，三套模板的配色和排版在 research/render.py 纳入版本控制。
 
+海报采用参考图风格的日期徽标、金色标题、抽象行情背景、彩色股票卡片和 Market View 面板；背景图形是装饰，并非实际行情走势。默认 black_gold，另保留 navy/ivory 配色。科技七巨头最多七只，其他主题最多十五只，较多成员自动排列成卡片网格。显示收盘价、当日涨跌幅和规则信号；单排卡片还显示支撑/阻力，不生成未经验证的预测涨跌幅。模拟数据明确标注 SIMULATED DATA。新增回归测试覆盖七列窄卡、最长股票代码、数值一致性及文字无重叠。
+
+独立复测且保留旧输出：
+
+```bash
+python -m research.pipeline --provider mock --date 2026-10-16 --out runs/reference-style --state state/reference-style
+python scripts/validate_outputs.py runs/reference-style/mock/2026-10-16
+pytest -q
+```
+
 本地输出到可写的 runs/，可用 --out 指定其他可写目录；不要使用当前机器没有权限创建的 /codex 路径。云端使用 GitHub runner 工作区，无需对系统目录 chmod。
 
 Actions 会先执行 300 只 mock 端到端验收，再在 polygon 模式执行 AAPL 真实 API 冒烟测试，之后执行完整股票池。每次 push main/work 会运行 mock；workflow_dispatch 可选 mock/polygon；定时模式为 polygon。Secrets 只在 runner 内注入，GitHub 不提供下载 Secret 明文的 API。
