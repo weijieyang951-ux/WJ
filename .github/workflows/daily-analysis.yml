@@ -1,0 +1,100 @@
+name: Daily US equity analysis
+on:
+  push:
+    branches: [main, work]
+  schedule:
+    # Half-hour retries; application resolves DST, holidays and delayed triggers.
+    - cron: '7,37 0-12,21-23 * * *'
+  workflow_dispatch:
+    inputs:
+      provider:
+        type: choice
+        options: [mock, polygon]
+        default: mock
+      session:
+        description: 'Optional YYYY-MM-DD trading session'
+        type: string
+      template:
+        type: choice
+        options: [black_gold, navy, ivory]
+        default: black_gold
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: daily-equity-analysis
+  cancel-in-progress: false
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      INPUT_PROVIDER: ${{ inputs.provider || (github.event_name == 'schedule' && 'polygon' || 'mock') }}
+      INPUT_SESSION: ${{ inputs.session }}
+      INPUT_TEMPLATE: ${{ inputs.template || 'black_gold' }}
+      POLYGON_RPM: ${{ vars.POLYGON_RPM || '5' }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install -y fonts-dejavu-core
+      - run: pip install -r requirements.lock
+      - run: pip install --no-deps -e '.[test]'
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: provider-cache-${{ github.run_id }}
+          restore-keys: provider-cache-
+      # Restore most recent durable successful state artifact; caches alone are not a ledger.
+      - name: Restore history
+        run: python scripts/restore_state.py
+      - name: Unit tests
+        run: pytest -q --ignore=tests/test_outputs_placeholder.py
+      - name: Mock end-to-end gate
+        run: |
+          python -m research.pipeline --provider mock --date 2026-10-16
+          python scripts/validate_outputs.py runs/mock/2026-10-16
+          pytest -q
+      - name: Live API smoke acceptance
+        if: env.INPUT_PROVIDER == 'polygon'
+        run: python scripts/api_smoke.py
+      - name: Analyze
+        shell: bash
+        run: |
+          args=(--provider "$INPUT_PROVIDER" --template "$INPUT_TEMPLATE")
+          if [ -n "$INPUT_SESSION" ]; then args+=(--date "$INPUT_SESSION"); fi
+          if [ "${{ github.event_name }}" = schedule ]; then args+=(--scheduled); fi
+          python -m research.pipeline "${args[@]}" 2>&1 | tee runs/analysis-console.log
+          find "runs/$INPUT_PROVIDER" -name reports.json -print0 | while IFS= read -r -d '' file; do
+            python scripts/validate_outputs.py "$(dirname "$file")"
+          done
+      - name: Collect acceptance logs
+        if: always()
+        run: |
+          mkdir -p runs
+          cp -f ACCEPTANCE.md runs/source-acceptance.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: research-${{ github.run_id }}
+          path: runs/
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: research-state
+          path: state/
+          retention-days: 90
+          if-no-files-found: ignore
+      - name: Notify failure
+        if: failure()
+        run: python -m research.notify 'FAILED — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+      - name: Notify success
+        if: success()
+        run: python -m research.notify 'completed — see Actions artifacts'

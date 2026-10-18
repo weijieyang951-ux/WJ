@@ -1,0 +1,150 @@
+{
+  "AI 人工智能": [
+    "NVDA",
+    "MSFT",
+    "GOOGL",
+    "META",
+    "AMD",
+    "PLTR",
+    "AI",
+    "SOUN"
+  ],
+  "半导体": [
+    "NVDA",
+    "AMD",
+    "AVGO",
+    "INTC",
+    "QCOM",
+    "MU",
+    "ARM",
+    "TSM"
+  ],
+  "科技七巨头": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "TSLA"
+  ],
+  "云计算": [
+    "AMZN",
+    "MSFT",
+    "GOOGL",
+    "ORCL",
+    "CRM",
+    "SNOW",
+    "NET"
+  ],
+  "网络安全": [
+    "CRWD",
+    "PANW",
+    "ZS",
+    "FTNT",
+    "S",
+    "OKTA"
+  ],
+  "量子计算": [
+    "IONQ",
+    "RGTI",
+    "QBTS",
+    "QUBT"
+  ],
+  "机器人": [
+    "ISRG",
+    "SYM",
+    "TER",
+    "ROK"
+  ],
+  "电动车": [
+    "TSLA",
+    "RIVN",
+    "LCID",
+    "NIO",
+    "XPEV",
+    "LI"
+  ],
+  "自动驾驶": [
+    "TSLA",
+    "MBLY",
+    "LAZR",
+    "AUR"
+  ],
+  "新能源": [
+    "FSLR",
+    "ENPH",
+    "SEDG",
+    "NEE"
+  ],
+  "核能": [
+    "CEG",
+    "VST",
+    "SMR",
+    "OKLO",
+    "CCJ"
+  ],
+  "加密资产概念股": [
+    "COIN",
+    "MSTR",
+    "MARA",
+    "RIOT",
+    "CLSK"
+  ],
+  "金融科技": [
+    "V",
+    "MA",
+    "PYPL",
+    "SOFI",
+    "HOOD"
+  ],
+  "银行金融": [
+    "JPM",
+    "BAC",
+    "WFC",
+    "C",
+    "GS",
+    "MS"
+  ],
+  "医疗制药": [
+    "LLY",
+    "JNJ",
+    "PFE",
+    "MRK",
+    "ABBV"
+  ],
+  "生物科技": [
+    "MRNA",
+    "BNTX",
+    "REGN",
+    "VRTX",
+    "GILD"
+  ],
+  "航空航天": [
+    "BA",
+    "RKLB",
+    "ASTS",
+    "LUNR"
+  ],
+  "国防军工": [
+    "LMT",
+    "NOC",
+    "RTX",
+    "GD",
+    "LHX"
+  ],
+  "消费零售": [
+    "WMT",
+    "COST",
+    "TGT",
+    "HD",
+    "NKE"
+  ],
+  "能源石油": [
+    "XOM",
+    "CVX",
+    "COP",
+    "SLB",
+    "OXY"
+  ]
+}
